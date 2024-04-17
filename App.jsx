@@ -66,7 +66,7 @@ const App = () => {
     setIsPlaying(true);
 
     try {
-      const msg = await audioRecorderPlayer.startPlayer();
+      await audioRecorderPlayer.startPlayer();
       audioRecorderPlayer.addPlayBackListener(playBackListener);
     } catch (error) {
       console.error("재생 시작 실패:", error);
@@ -75,12 +75,10 @@ const App = () => {
     }
   };
 
-  const debouncedOnPressOut = debounce(async () => {
+  const debouncedStopAndPlay = debounce(async () => {
     await onStopRecord();
-      await onStartPlay();
-  }, 300);  // 300ms 디바운스
-
-
+    await onStartPlay();
+  }, 400);  // 300ms 디바운스
 
 
 // ================= 렌더링 ====================
@@ -90,7 +88,7 @@ const App = () => {
             disabled={isRecording || isPlaying}
             style={isRecording ? styles.buttonRecording : isPlaying ? styles.buttonPlaying : styles.button}
             onPressIn={onStartRecord}
-            onPressOut={debouncedOnPressOut}
+            onPressOut={debouncedStopAndPlay}
         >
           <Text style={styles.btnText}>{isRecording ? 'Recording' : isPlaying ? 'Playing' : 'Record'}</Text>
         </TouchableOpacity>
@@ -99,6 +97,7 @@ const App = () => {
 
   );
 };
+
 // ================= 스타일 ====================
 const styles = StyleSheet.create({
   container: {
